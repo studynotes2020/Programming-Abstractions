@@ -1,0 +1,104 @@
+Thinking about Design
+
+Runtime performance
+  Big-O analysis
+  Actual empirical time results
+  Mix of expected operations
+  Identifying worst case/degenerates
+
+Memory used
+  Overhead, excess capacity
+  Redundancy vs sharing
+
+Coding complexity
+  Ease of developing/debugging
+  Maintainability
+  Future flexibility
+
+
+Making tradeoffs
+
+Array vs Vector
+  Vector as cover for array Vector has bound checking, growing
+  When is array still good choice? know size beforehand
+Stack/Queue vs Vector
+  Vector is fancier, why do Stack/Queue even exist?
+Sorted vs not
+  Calculating payoff
+  What sorting algorithn is "best"?
+Set vs sorted Vector
+  What advantages, at what cost?
+  In what way is PQueue like a sorted vector? In what ways is it not?
+Pointer-based vs contiguous memory
+  What tradeoffs are involved?
+
+
+MVP of the Course
+
+Abstraction
+  Leverage, tame complexity, tackle more interesting problem
+Recursion
+  Recursive problem-solving, backtracking
+Algorithm analysis
+  Space/time, big-O, scalability
+Implementation strategies/tradeoffs
+  Arrays, linked lists, trees, heaps, graphs
+Appreciation for Design
+  Beautiful, elegantcdoe
+Not so much
+  pointers, C++ (choose this language bcs this language invested heavily in pointers)
+
+
+Pointers
+
+Powerful facility
+  Control over runtime allocation/deallocation
+  Flexible wiring for data structures
+  Sharing instead of copying
+...with many pitfalls
+  Use of uninitialized pointers
+  Missing or duplicate allications/deallocations
+  Use of deleted memory
+  Overrun memory boundaries
+  Can be tricky to track symptom back to root cause
+
+
+To remember years from now
+
+Algorithmic thinking
+  Logic, debugging
+Ballparking
+  "Back of the envelope" calculations
+Tradeoffs
+  The answer to most questions: "it depends..."
+
+
+//////////////////////////////////////////////////////
+
+Last lecture, some advertisements about C++
+
+C++ Philosophy
+
+C++'s evolution must be driven by real problems.
+Don't get involved in a sterile quest for perfection.
+
+ #include <cstdlib>
+ #include <string>
+using namespace std;
+
+void Error(string message) 
+{
+    cerr << "Error: " << message << endl;
+    exit(-1);  // Quit, report error code
+}
+
+Pass by reference
+  Could be for efficiency
+  Could be for mutability
+void DoSomething(const vector<int> &myVec);
+  Guaranteed that myVec isn't modified
+  Alerts programmers to pass-by-reference for efficiency reasons
+
+
+
+  

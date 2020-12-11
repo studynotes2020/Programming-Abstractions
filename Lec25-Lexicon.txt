@@ -1,0 +1,195 @@
+Case Study - Lexicon
+
+1. Lexicon as sorted vector
+private:
+    vector<string> words;
+
+containsWord?
+  Binary search using ==, O(lgN) time
+containsPrefix?
+  Binary search using substr ==, O(lgN)
+add?
+  Binary search to find position, shuffle to insert, O(N)
+space usage?
+  Per-entry = sizeof(string) = length*sizeof(char)
+  ~8 bytes per word (assuming words average len 8 chars)
+
+
+2. Lexion as binary search tree
+private:
+  struct node {
+      string word;
+      node *left, *right;
+  };
+  node *root;
+
+containsWord?
+  Tree search using ==, O(lgN) time
+containsPrefix?
+  Tree search using substr ==, O(lgN)
+add?
+  Tree search to find position, insert new leaf, O(lgN)
+space usage?
+  Per-entry = string + left/right pointers + balance factor
+  ~18 bytes per word
+
+3. Lexicon as hash table
+private:
+  struct cell {
+    string word;
+    cell *next;
+  };
+  cell *buckets[NBuckets];
+
+containsWord?
+  Hash to bucket, search bucket O(N/B)
+containsPrefix?
+  Search all buckets O(N)  
+add?
+  Hash to bucket, search/add to bucket O(N/B)
+space usage?
+  Per-entry = string + 4-byte pointer + 4-byte bucket pointer
+  ~16 bytes per word
+
+
+Summary so far
+                Sorted vector  BST      Hashtable
+containsWord    O(lgN)         O(lgN)   O(1)
+containsPrefix  O(lgN)         O(lgN)   O(N)
+add             O(N)           O(lgN)   O(1)
+bytes per word  8              18       16
+
+OSPD2.txt has 125,000 words
+  Average length 8 characters, file is 1.1MB
+At 8-18 bytes per word, total is 1MB to 2.3MB
+Boggle lexicon actually only take ~0.3MB...how?
+
+4. Lexicon as trie
+
+Letter trie
+- Trie from retrieval (but pronounced "try")
+- 26-way branching tree
+- Paths are prefixes
+- Path that ends at thick circle is word (show in the slide)
+
+private:
+  struct node {
+    char letter;
+    bool isWord;
+    node *children[26];
+  };
+  node *root;
+
+containsWord?
+  Trace path, check isWord, O(len)
+containsPrefix?
+  Trace path O(len)
+add?
+  Trace path, add new nodes as needed O(len)
+space usage?
+  Per-node = 106 bytes
+  Trie for OSPD2 has ~250,000 nodes = 26.5MB
+
+Optimze - don't use 26 children -> Dynamic array of children
+Replace static array of children with dynamically-sized array
+  Most of 26 entires are NULL anyway
+
+private:
+  struct node {
+    char letter;
+    bool isWord;
+    node **children;
+    int nChildren;
+  };
+  node *root;
+
+space usage?
+  Per-node = 10 bytes + NumChildren*4 bytes
+  Each node averages 6 children, so total 34 bytes
+  Trie for OSPD2 has ~250,000 nodes = 8.5MB
+
+Flatten tree into array
+  Like we did for heap, but not for fixed location
+  Saves for all space used for pointers
+  Makes data structure much less flexible (insert/delete words)
+
+private:
+  struct node {
+    char letter;
+    bool isWord;
+    int childIndex;
+    int nChildren;
+  };
+  node *root;
+
+space usage?
+  Per-node = 10 bytes
+  Trie for OSPD2 has ~250,000 nodes = 2.5MB
+  Now same as ballpark as bst/hash
+
+
+5. Lexicon as Directed Acyclic Word Graph (DAWG)
+
+Unify suffixes as well as prefixes
+
+Directed
+  Arcs go one-way only
+Acyclic
+  No cycles
+    banana, bananan...a
+Graph
+  Generalized tree
+  Can be more than one path between nodes
+
+private:
+  struct node {
+    char letter;
+    bool isWord;
+    int childIndex;
+    int nChildren;
+  };
+  node *root;
+
+Unify suffixes as well as prefixes
+  Trie had 250,000 nodes, dawg has just 80,000
+  125,000 words - so many words have no unique nodes
+
+space usage?
+  Per-node = 10 bytes
+  Dawg for OSPD2 has ~80,000 nodes = 0.8MB
+
+
+The final result
+
+private:
+  struct node {
+    5 bits letter;
+    1 bit isWord;
+    1 bit for lastChild;
+    25 bits childIndex;
+  };
+  node *root;
+
+Bitpack node into smallest size
+  Only 26 letters, don't need full ASCII, squeeze in 5 bits
+  isWord/last each 1 bit
+  Remaining 25 bits used for index
+  Each node shrinks from 10 bytes down to 4
+
+Space usage?
+  Dawg for OSPD2 has ~80,000 nodes = 0.32MB
+
+  
+Cool facts about dawg
+1.Easily written/read to disk
+    Just take the entire array and write it out as is
+    Indexes don't change. no pointers!
+    Easy to restore
+2.Data structure facilitates other interesting operations
+    Tweak width of "beam" as you traverse path to explore just near neighbors
+      Regex, spelling corrections, slight permutations
+    Solving puzzles
+      Anagrams, hangman, scrabble, etc
+
+
+      

@@ -1,0 +1,53 @@
+struct nodeT;  // this is a forward reference
+
+struct  arcT {
+    // arc fields (distance, cost, etc)
+    nodeT *start, *end;
+};
+
+struct nodeT {
+    // node fields (name, etc)
+    Vector<arcT *> outgoing;
+};
+
+
+void DepthFirstSearch(nodeT *cur, Set<nodeT *> &visited)
+{
+    if (visited.contains(cur)) return;  // using Set to track which nodes visited
+    // do something with cur
+    for (int i = 0; i < cur->outgoing.size(); i++)
+        DepthFirstSearch(cur->outgoing[i]->end, visited);
+}
+
+void BreadthFirstSearch(nodeT *start)
+{
+    Queue<nodeT *> q;
+    Set<nodeT *> visited;
+    q.enqueue(start);
+
+    while (!q.isEmpty()) {
+        nodeT *cur = q.dequeue();
+        if (!visited.contains(cur)) {
+            visited.add(cur);
+            for (int i = 0; i < cur->outgoing.size(); i++)
+                q.enqueue(cur->outgoing[i]->end);
+        }
+    }
+}
+
+
+Many Interesting questions are just graph search
+  Which nodes are reachable from this node?
+  Does the graph have a cycle?
+  Is the graph fully connected?
+  Longest path without a cycle?
+  Is there a continuous path that visits all nodes once and exactly once?
+Searching for word ladders
+  Where are the nodes? What are the arcs?
+  What kind of traversal might work?
+Spell-checking suggestions
+  What are the nodes? What are the arcs?
+  How to support wildcards: desp.rate
+Weighted arcs
+  What if hops not all equal
+

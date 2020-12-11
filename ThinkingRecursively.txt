@@ -1,0 +1,24 @@
+Thinking Recursively
+1. Recursive decomposition is the hard part
+  Find recursive sub-structure
+    Solve problem using result from smaller subproblem(s)
+  Indentify base case
+    Simplest possible case, directly solvable, recursion advnaces to it
+2. Common patterns
+  Handle first and/or last, recur on remaining
+  Divide in half, recur on one/both halves
+  Make a choice among options, recur on updated state
+3. Placement of recursive call(s)
+  Recur-then-process versus process-then-recur
+
+Procedural vs Functional
+1. Functional recursion
+  Function returns result
+  Computers using result from recursive call(s)
+2. Procedural recursion
+  No return value (functions returns void)
+  Task accomplised during recursive calls
+3. Example: drawing fractal
+  Self-similar structure
+  Repeats itself within
+  Outer fractal makes recursive call to draw inner fractal(s)
